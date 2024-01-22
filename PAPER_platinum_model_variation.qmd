@@ -1,0 +1,170 @@
+---
+title: "Gridsemble on Platinum Spike Dataset - Model Variation"
+author: "Jenna Landy"
+date: "2023-12-21"
+output: pdf_document
+cache: TRUE
+---
+
+```{r message = FALSE}
+source('PAPER_metrics_helpers.R')
+load("platinum_data.RData")
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(ggthemes) 
+library(locfdr)
+library(fdrtool)
+library(qvalue)
+```
+
+## How differently do different models behave?
+```{r}
+get_oracle <- function(data, grids) {
+  fdrtool_grid = grids$fdrtool
+  locfdr_grid = grids$locfdr 
+  qvalue_grid = grids$qvalue
+  
+  if (nrow(fdrtool_grid) == 0) {
+    oracle_fdrtool <- data.frame()
+  } else {
+    loss = vector(length = nrow(fdrtool_grid))
+    pi0 = vector(length = nrow(fdrtool_grid))
+    for (i in 1:nrow(fdrtool_grid)) {
+      fdrtool_res = fdrtool(
+        data$t, 
+        cutoff.method = as.character(fdrtool_grid$cutoff.method[i]), 
+        pct0 = fdrtool_grid$pct0[i],
+        plot = 0
+      )
+      fdr = fdrtool_res$lfdr
+      Fdr = Fdr_from_fdr(fdr, data$t)
+      loss[i] = mean((Fdr - data$Fdr)**2)
+      pi0[i] = fdrtool_res$param[,'eta0']
+    }
+    oracle_fdrtool <- data.frame(list(
+      model = paste0("fdrtool:", rownames(fdrtool_grid)),
+      loss = loss,
+      pi0 = pi0
+    ))
+  }
+  
+  if (nrow(locfdr_grid) == 0) {
+    oracle_locfdr <- data.frame()
+  } else {
+    loss = vector(length = nrow(locfdr_grid))
+    pi0 = vector(length = nrow(locfdr_grid))
+    for(i in 1:nrow(locfdr_grid)) {
+      locfdr_res <- locfdr(
+        data$t,
+        pct = locfdr_grid$pct[i],
+        pct0 = locfdr_grid$pct0[i],
+        nulltype = locfdr_grid$nulltype[i],
+        type = locfdr_grid$type[i],
+        plot = 0
+      )
+      fdr = locfdr_res$fdr
+      Fdr = Fdr_from_fdr(fdr, data$t)
+      loss[i] <- mean((Fdr - data$Fdr)**2)
+      if (locfdr_grid$nulltype[i] == 0) {
+        pi0[i] <- locfdr_res$fp0['thest','p0']
+      } else if (locfdr_grid$nulltype[i] == 1) {
+        pi0[i] <- locfdr_res$fp0['mlest','p0']
+      } else {
+        pi0[i] <- locfdr_res$fp0['cmest','p0']
+      }
+    }
+    
+    oracle_locfdr <- data.frame(list(
+      model = paste0("locfdr:", rownames(locfdr_grid)),
+      loss = loss,
+      pi0 = pi0
+    ))
+  }
+    
+  if (nrow(qvalue_grid) == 0) {
+    oracle_qvalue <- data.frame()
+  } else {
+    loss = vector(length = nrow(qvalue_grid))
+    pi0 = vector(length = nrow(qvalue_grid))
+    for(i in 1:nrow(qvalue_grid)) {
+      qvalue_res <- qvalue(
+        p_from_t(data$t),
+        transf = as.character(qvalue_grid$transf[i]),
+        adj = qvalue_grid$adj[i],
+        pi0.method = as.character(qvalue_grid$pi0.method[i]),
+        smooth.log.pi0 = qvalue_grid$smooth.log.pi0[i]
+      )
+      fdr = qvalue_res$lfdr
+      Fdr = Fdr_from_fdr(fdr, data$t)
+      loss[i] <- mean((Fdr - data$Fdr)**2)
+      pi0[i] <- qvalue_res$pi0
+    }
+    oracle_qvalue <- data.frame(list(
+      model = paste0("qvalue:", rownames(qvalue_grid)),
+      loss = loss,
+      pi0 = pi0
+    ))
+  }
+  
+  return(list(
+    locfdr = oracle_locfdr,
+    fdrtool = oracle_fdrtool,
+    qvalue = oracle_qvalue
+  ))
+}
+```
+
+```{r}
+fdrtool_grid <- build_fdrtool_grid(platinum_data$statistics)
+locfdr_grid <- build_locfdr_grid(platinum_data$statistics)
+qvalue_grid <- build_qvalue_grid(platinum_data$statistics)
+```
+
+```{r eval = FALSE}
+oracle <- get_oracle(
+  data = list(
+    t = platinum_data$statistics,
+    truth = platinum_data$fold_change$DE,
+    Fdr = get_true_Fdr(platinum_data$statistics, platinum_data$fold_change$DE)
+  ),
+  grids = list(
+    fdrtool = fdrtool_grid,
+    locfdr = locfdr_grid,
+    qvalue = qvalue_grid
+  )
+)
+
+save(oracle, file = "oracle.RData")
+```
+
+```{r}
+load("oracle.RData")
+oracle <- do.call(rbind, oracle)
+```
+
+True model losses range from 0 to 0.35
+```{r}
+hist(oracle$loss)
+```
+
+$\pi_0$ estimates range from 0.01 to 1
+```{r}
+hist(oracle$pi0)
+min(oracle$pi0)
+max(oracle$pi0)
+sum(oracle$pi0 < 0.4)
+```
+
+This plot shows that high deviations from true pi0 value correlate with high (bad) oracle losses.
+```{r}
+true_pi0 = mean(1-platinum_data$fold_change$DE)
+
+oracle %>%
+  ggplot(aes(x = loss, y = pi0)) +
+  geom_point() +
+  geom_abline(slope = 0, intercept = true_pi0) +
+  theme_few()
+```
