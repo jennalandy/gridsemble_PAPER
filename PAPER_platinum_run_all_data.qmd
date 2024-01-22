@@ -2,7 +2,8 @@
 title: "Gridsemble on Platinum Spike Dataset - Models on All Data"
 author: "Jenna Landy"
 date: "2023-12-21"
-output: pdf_document
+format:
+  pdf
 ---
 
 ```{r message = FALSE}
@@ -10,14 +11,14 @@ source('PAPER_metrics_helpers.R')
 load("PAPER_platinum_data.RData")
 ```
 
-```{r message = FALSE}
+```{r message = FALSE, warning = FALSE}
 remove.packages('gridsemblefdr')
 library(devtools)
 devtools::install_github('jennalandy/gridsemblefdr')
 library(gridsemblefdr)
 ```
 
-```{r}
+```{r message = FALSE}
 library(locfdr)
 library(fdrtool)
 library(qvalue)
@@ -40,7 +41,7 @@ color_list = list(
 
 `locfdr` fails with default `pct0 = 0` because there are a few extreme outlier. We use `pct0 = 0.001` instead.
 
-```{r}
+```{r, warning = FALSE}
 locfdr_res <- locfdr(platinum_data$statistics, pct0 = 0.001)
 fdrtool_res <- fdrtool(platinum_data$statistics, plot = 0)
 qvalue_res <- qvalue(p_from_t(platinum_data$statistics, df = 4))
@@ -140,52 +141,6 @@ fdr_metrics = data.frame(fdr_metrics)
 fdr_metrics
 ```
 
-### Metrics on fdr estimates
-
-```{r fig.width = 10, fig.height = 10}
-par(mfrow = c(2,2))
-
-plot(
-  Fdr_from_fdr(gridsemble_res$fdr, platinum_data$statistics),
-  platinum_data$Fdr,
-  xlim = c(0,1),
-  ylim = c(0,1),
-  main = "gridsemble",
-  xlab = 'estimated', ylab = 'true'
-)
-abline(0, 1)
-
-plot(
-  Fdr_from_fdr(locfdr_res$fdr, platinum_data$statistics),
-  platinum_data$Fdr,
-  xlim = c(0,1),
-  ylim = c(0,1),
-  main = "locfdr",
-  xlab = 'estimated', ylab = 'true'
-)
-abline(0, 1)
-
-plot(
-  Fdr_from_fdr(qvalue_res$lfdr, platinum_data$statistics),
-  platinum_data$Fdr,
-  xlim = c(0,1),
-  ylim = c(0,1),
-  main = "qvalue",
-  xlab = 'estimated', ylab = 'true'
-)
-abline(0, 1)
-
-plot(
-  Fdr_from_fdr(fdrtool_res$lfdr, platinum_data$statistics),
-  platinum_data$Fdr,
-  xlim = c(0,1),
-  ylim = c(0,1),
-  main = "fdrtool",
-  xlab = 'estimated', ylab = 'true'
-)
-abline(0, 1)
-```
-
 ### Classification Metrics
 
 #### 0.2 cutoff
@@ -231,7 +186,7 @@ classification_metrics_cutoff0.2 = rbind(
 classification_metrics_cutoff0.2
 ```
 
-###$ cutoff based on $\hat\pi_0$
+#### cutoff based on $\hat\pi_0$
 
 ```{r}
 gridsemble_cutoff <- quantile(gridsemble_res$fdr, 1-gridsemble_res$pi0)
@@ -277,7 +232,7 @@ classification_metrics_cutoff_pi0hat = rbind(
 classification_metrics_cutoff_pi0hat
 ```
 
-###$ cutoff based on $\pi_0$
+#### cutoff based on $\pi_0$
 
 ```{r}
 pi0 = mean(platinum_data$fold_change$DE==0)

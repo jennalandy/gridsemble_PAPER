@@ -2,7 +2,8 @@
 title: "Gridsemble on Platinum Spike Dataset - Models on Subsets"
 author: "Jenna Landy"
 date: "2023-12-21"
-output: pdf_document
+format:
+  pdf
 cache: TRUE
 ---
 

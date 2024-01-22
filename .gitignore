@@ -1,7 +1,11 @@
+*.rmarkdown
+*cache*
 .DS_Store
 .Rhistory
 *.Rproj*
 *.png
 *.RData
 PAPER_platinum_model_variation.Rmd
+GSE21344/*
+*files*
 *.html
