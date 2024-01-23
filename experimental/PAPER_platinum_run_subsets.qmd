@@ -5,6 +5,8 @@ date: "2023-12-21"
 format:
   pdf
 cache: TRUE
+execute:
+  warning: FALSE
 ---
 
 ```{r message = FALSE}
@@ -284,19 +286,6 @@ plot_dat = do.call(rbind, all_subset_mets) %>%
     )
   )
 ```
-
-```{r}
-do.call(rbind, all_subset_mets) %>%
-  filter(method == 'locfdr') %>%
-  filter(!is.na(roc)) %>%
-  group_by(pi0) %>%
-  summarize(n = n())
-
-plot_dat %>%
-  filter(method == 'locfdr') %>%
-  select(pi0, roc_center, roc_lower, roc_upper)
-```
-
 
 ```{r}
 plot_dat2 <- merge(
