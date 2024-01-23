@@ -45,9 +45,9 @@ Our experimental application relies on the Platinum Spike dataset<sup>1</sup>. W
 
 **Notebooks**
 
-- [`PAPER_platinum_data`](https://github.com/jennalandy/gridsemble_PAPER/blob/main/PAPER_platinum_data.pdf): download and pre-process Platinum Spike data. This needs to be run before either of the analysis documents.
-- [`PAPER_platinum_run_subsets`](https://github.com/jennalandy/gridsemble_PAPER/blob/main/PAPER_platinum_run_subsets.pdf): analyses on subsets of Platinum Spike data with $\pi_0 \in [0.6, 0.95]$, used to create Figure 2.
-- [`PAPER_platinum_run_all_data`](https://github.com/jennalandy/gridsemble_PAPER/blob/main/PAPER_platinum_run_all_data.pdf): analyses on the full Platinum Spike dataset, used to create Supplementary Figure 3 and Supplementary Table 2.
+- [`PAPER_platinum_data`](https://github.com/jennalandy/gridsemble_PAPER/blob/main/experimental/PAPER_platinum_data.pdf): download and pre-process Platinum Spike data. This needs to be run before either of the analysis documents.
+- [`PAPER_platinum_run_subsets`](https://github.com/jennalandy/gridsemble_PAPER/blob/main/experimental/PAPER_platinum_run_subsets.pdf): analyses on subsets of Platinum Spike data with $\pi_0 \in [0.6, 0.95]$, used to create Figure 2.
+- [`PAPER_platinum_run_all_data`](https://github.com/jennalandy/gridsemble_PAPER/blob/main/experimental/PAPER_platinum_run_all_data.pdf): analyses on the full Platinum Spike dataset, used to create Supplementary Figure 3 and Supplementary Table 2.
 
 **Other**
 
