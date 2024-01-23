@@ -1,3 +1,6 @@
+*.log
+*.csv
+simulations/*.Rmd
 *.rmarkdown
 *cache*
 .DS_Store
@@ -5,7 +8,7 @@
 *.Rproj*
 *.png
 *.RData
-PAPER_platinum_model_variation.Rmd
-GSE21344/*
+*PAPER_platinum_model_variation.Rmd
+*/GSE21344/*
 *files*
 *.html
