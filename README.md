@@ -29,18 +29,19 @@ These scripts can only be run after their grid search counterparts.
 
 - `symmetric_test_random.R`
 - `asymmetric_test_random.R`
+- `cod_based_test_random.R`
 - `get_random_grid.R`: functions to construct grids for a random search.
 
 **Scripts sourced by the above**
 
-- `test.R`: defines wrapper function to run a simulation study given a data generating function.
+- `test.R`: defines wrapper functions to run simulation study given a data generating function.
 - `evaluate.R`: functions to compute metrics given fdr estimates and ground truth.
 - `simulate.R`: functions to simulate each type of data.
 - `utils.R`: other utility functions.
 
 ### Experimental Application
 
-Our experimental application relies on the Platinum Spike dataset$^1$. We use [quarto](https://quarto.org/) documents which can be edited and run within RStudio, Jupyter Lab, or Visual Studio Code.
+Our experimental application relies on the Platinum Spike dataset<sup>1</sup>. We use [quarto](https://quarto.org/) documents which can be edited and run with RStudio, Jupyter Lab, or Visual Studio Code.
 
 **Notebooks**
 
@@ -52,6 +53,6 @@ Our experimental application relies on the Platinum Spike dataset$^1$. We use [q
 
 - `PAPER_metrics_helpers.R`: functions to calculate metrics and helper functions.
 
-## References
+### References
 
 [1] Q. Zhu, J.C. Miecznikowski, and M.S. Halfon. Preferred analysis methods for affymetrix genechips. II. an expanded, balanced, wholly-defined spike-in dataset. *BMC Bioinformatics*, 11:285, 2010. doi:https://doi.org/10.1186/1471-2105-11-285.
