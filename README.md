@@ -2,7 +2,7 @@
 
 For the `gridsemblefdr` R software package, see the [jennalandy/gridsemblefdr](https://github.com/jennalandy/gridsemblefdr) repository.
 
-This repository contains the code to replicate all results reported in the paper *Gridsemble: Selective Ensembling for False Discovery Rates*. See details in the Simulation Study and Experimental Application sections of our paper.
+This repository contains the code to replicate all results reported in the paper [*Gridsemble: Selective Ensembling for False Discovery Rates*](https://arxiv.org/abs/2401.12865). See details in the Simulation Study and Experimental Application sections of our paper.
 
 ### Simulation Studies
 
